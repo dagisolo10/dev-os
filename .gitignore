@@ -42,5 +42,3 @@ next-env.d.ts
 
 /app/generated/prisma
 /src/prisma/seed.ts
-/src/components/cache*
-/public/service-worker.js

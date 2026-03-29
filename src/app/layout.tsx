@@ -1,8 +1,14 @@
 import "./globals.css";
 
+import prisma from "@/lib/prisma";
 import type { Metadata } from "next";
+import { slugify } from "@/lib/helper-functions";
 import { Toaster } from "@/components/ui/sonner";
+import { CacheWarmer } from "@/components/cache/cache-warmer";
+import ServiceRegister from "@/components/cache/service-register";
+import OfflineIndicator from "@/components/cache/offline-indicator";
 import { Manrope, Playfair_Display, Poppins } from "next/font/google";
+import UpdateNotification from "@/components/display/update-notification";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
 const poppins = Poppins({ subsets: ["latin"], variable: "--font-poppins", weight: "300" });
@@ -16,18 +22,18 @@ export const metadata: Metadata = {
     formatDetection: { telephone: false },
 };
 
-// const projects = await prisma.project.findMany({ include: { tasks: true } });
-// const allRoutes = projects.flatMap((project) => [`/${slugify(project.title)}-${project.id}`, ...project.tasks.map((t) => `/${project.title}-${project.id}/${t.slug}-${t.id}`)]);
+const projects = await prisma.project.findMany({ include: { tasks: true } });
+const allRoutes = projects.flatMap((project) => [`/${slugify(project.title)}-${project.id}`, ...project.tasks.map((t) => `/${project.title}-${project.id}/${t.slug}-${t.id}`)]);
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" className="dark">
             <body className={`${manrope.variable} ${playfair.variable} ${poppins.variable} antialiased`}>
                 <main className="min-h-screen p-12 font-sans text-zinc-400">{children}</main>
-                {/* <OfflineIndicator />
+                <OfflineIndicator />
                 <UpdateNotification />
                 <ServiceRegister />
-                <CacheWarmer routes={allRoutes} /> */}
+                <CacheWarmer routes={allRoutes} />
                 <Toaster position="top-center" />
             </body>
         </html>
