@@ -1,0 +1,54 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model Project {
+    id        String    @id @default(uuid())
+    title     String
+    tasks     Task[]
+    journals  Journal[]
+    completed Boolean   @default(false)
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+}
+
+model Journal {
+    id        String   @id @default(uuid())
+    title     String?
+    content   String
+    projectId String
+    project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Task {
+    id        String   @id @default(uuid())
+    title     String
+    slug      String
+    order     Int
+    notes     Note[]
+    completed Boolean  @default(false)
+    projectId String
+    project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([projectId, slug])
+}
+
+model Note {
+    id        String   @id @default(uuid())
+    title     String
+    content   String
+    order     Int
+    code      String?
+    taskId    String
+    task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
